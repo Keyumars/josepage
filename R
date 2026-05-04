@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Jose | Welcome Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c12;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            overflow: hidden;
+            transition: background-color 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        /* مرحله 1: صفحه اول با لوگو */
+        .stage-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: opacity 0.4s ease;
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .jose-text {
+            font-size: 7rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #F9E0A0, #f5b042);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(245,176,66,0.3);
+        }
+
+        /* نقطه دقیقاً روی حرف J (سمت راست و بالای J برای انگلیسی) */
+        .dot-on-j {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #f5b042;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #ffcd7e;
+            opacity: 1;
+            z-index: 10;
+            /* مختصات قرارگیری روی حرف J: 
+            حرف J در کلمه JOSE اولین حرف سمت چپ هست (در راستای چپ به راست)
+            اما نمایش فارسی/لاتین فرقی نداره، نقطه رو بالای J قرار میدیم */
+            top: -12px;
+            left: 12px;
+            transform: translateX(0);
+        }
+
+        /* انیمیشن پرواز نقطه به سمت جلو و مرکز صفحه */
+        .dot-fly {
+            animation: flyToViewer 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.3) forwards;
+        }
+
+        @keyframes flyToViewer {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            45% {
+                transform: translate(35vw, 15vh) scale(3.5);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(45vw, -5vh) scale(28);
+                opacity: 0;
+            }
+        }
+
+        /* سفید شدن کامل صفحه */
+        body.white-flash {
+            background-color: #ffffff !important;
+        }
+
+        /* صفحه welcome */
+        .welcome-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .welcome-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-text {
+            font-size: 5.5rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #D4AF37, #b97f10);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gentleScale 0.8s ease;
+            letter-spacing: -0.02em;
+        }
+
+        .sub-welcome {
+            font-size: 1.3rem;
+            color: #2c2f3f;
+            font-weight: 500;
+        }
+
+        @keyframes gentleScale {
+            0% { transform: scale(0.92); opacity: 0; letter-spacing: 5px; }
+            100% { transform: scale(1); opacity: 1; letter-spacing: normal; }
+        }
+
+        /* دکمه ریست کوچک بدون متن اضافی - فقط آیکن */
+        .reset-button {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: #1e1f2e;
+            border: none;
+            color: #f5b042;
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.2s;
+            opacity: 0.8;
+        }
+        .reset-button:hover {
+            opacity: 1;
+            transform: scale(1.02);
+            background: #2a2d40;
+        }
+
+        @media (max-width: 600px) {
+            .jose-text { font-size: 3.5rem; letter-spacing: 3px; }
+            .dot-on-j { width: 14px; height: 14px; top: -8px; left: 8px; }
+            .welcome-text { font-size: 2.8rem; }
+            .sub-welcome { font-size: 1rem; }
+        }
+
+        /* مخفی کردن stage هنگام انتقال */
+        .hidden-stage {
+            display: none;
+        }
+    </style>
+</head>
+<body id="appBody">
+
+    <div class="stage-1" id="stageOne">
+        <div class="logo-container" id="logoContainer">
+            <div class="jose-text" id="joseWord">JOSE</div>
+            <div class="dot-on-j" id="goldenDot"></div>
+        </div>
+    </div>
+
+    <div class="welcome-message" id="welcomeScreen">
+        <div class="welcome-text">✨ Welcome ✨</div>
+        <div class="sub-welcome">به صفحه خوزه خوش آمدی</div>
+    </div>
+
+    <button class="reset-button" id="resetBtn">↻</button>
+
+    <script>
+        const bodyEl = document.getElementById('appBody');
+        const stageOne = document.getElementById('stageOne');
+        const dot = document.getElementById('goldenDot');
+        const logoContainer = document.getElementById('logoContainer');
+        const welcomeDiv = document.getElementById('welcomeScreen');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let animationInProgress = false;
+
+        // تابع بازنشانی کامل بدون هیچ متن راهنما
+        function resetAnimation() {
+            if (animationInProgress) return;
+            
+            // حذف صفحه welcome
+            welcomeDiv.classList.remove('show');
+            // حذف سفیدی بدنه
+            bodyEl.classList.remove('white-flash');
+            bodyEl.style.backgroundColor = '#0a0c12';
+            // نمایش دوباره stage one
+            stageOne.style.display = 'flex';
+            stageOne.style.opacity = '1';
+            stageOne.classList.remove('hidden-stage');
+            // ریست نقطه
+            dot.classList.remove('dot-fly');
+            dot.style.opacity = '1';
+            dot.style.transform = 'translate(0,0) scale(1)';
+            // force re-render
+            void dot.offsetHeight;
+            animationInProgress = false;
+        }
+
+        // تابع شروع انیمیشن
+        function startAnimation() {
+            if (animationInProgress) return;
+            animationInProgress = true;
+
+            // 1. نقطه شروع به حرکت می‌کند
+            dot.classList.add('dot-fly');
+
+            // 2. بعد از 450 میلی ثانیه صفحه سفید می‌شود و مرحله اول محو می‌گردد
+            setTimeout(() => {
+                // سفید کردن کامل پس زمینه
+                bodyEl.classList.add('white-flash');
+                // محو کردن stageOne
+                stageOne.style.transition = 'opacity 0.3s ease';
+                stageOne.style.opacity = '0';
+                setTimeout(() => {
+                    stageOne.style.display = 'none';
+                }, 280);
+            }, 420);
+
+            // 3. نمایش صفحه welcome بعد از پایان انیمیشن نقطه
+            setTimeout(() => {
+                welcomeDiv.classList.add('show');
+                bodyEl.classList.add('white-flash');
+                animationInProgress = false;
+                // پاکسازی کلاس نقطه برای دفعات بعد
+                dot.classList.remove('dot-fly');
+                dot.style.opacity = '1';
+                dot.style.transform = 'translate(0,0) scale(1)';
+            }, 950);
+        }
+
+        // رویداد کلیک روی لوگو (JOSE)
+        logoContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (animationInProgress) return;
+            startAnimation();
+        });
+
+        // دکمه ریست (بدون متن اضافی)
+        resetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (animationInProgress) return;
+            resetAnimation();
+        });
+
+        // اطمینان از نبودن هیچ متن راهنما در پایین یا یادداشت
+        console.log('نقطه روی حرف J قرار دارد و پس از کلیک صفحه سفید و welcome ظاهر می‌شود');
+    </script>
+</body>
+</html>
